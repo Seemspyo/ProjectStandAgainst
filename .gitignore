@@ -1,0 +1,8 @@
+# dependency
+node_modules
+
+# production
+/dist
+
+# dev only
+package-lock.json
