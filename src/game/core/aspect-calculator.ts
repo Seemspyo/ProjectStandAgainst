@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
-import { Size } from '../types';
-import { EventHelper } from './helper.module';
+import { EventHelper } from './helper';
+import { Size } from '../@types';
 
 
 export default class AspectCalculator {

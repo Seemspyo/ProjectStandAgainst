@@ -1,12 +1,11 @@
 import assignInWith from 'lodash.assigninwith';
 import { Container, Sprite } from 'pixi.js';
-import { Observable } from 'rxjs';
 
 
 export class UtilHelper {
 
-    static EMPTY(): void {
-
+    static void(): void {
+        return void(0);
     }
 
     static assign(target: any, source: any, override?: boolean): any {
@@ -15,6 +14,14 @@ export class UtilHelper {
 
     static brace(n: number, min: number, max: number): number {
         return Math.min(max, Math.max(min, n));
+    }
+
+    static radians(degree: number): number {
+        return degree * Math.PI / 180;
+    }
+
+    static degrees(radian: number): number {
+        return radian * 180 / Math.PI;
     }
 
 }
@@ -28,7 +35,7 @@ export class EventHelper {
             return () => el.removeEventListener(type, handler);
         }
 
-        return UtilHelper.EMPTY;
+        return UtilHelper.void;
     }
 
     static listenPixi(el: any, type: string, handler: any): () => void {
@@ -38,17 +45,7 @@ export class EventHelper {
             return () => el.off(type, handler);
         }
 
-        return UtilHelper.EMPTY;
-    }
-
-    static subscribe(observable: Observable<any>, handler: any): () => void {
-        if (observable instanceof Observable) {
-            const subscription = observable.subscribe(handler);
-
-            return () => subscription.unsubscribe();
-        }
-
-        return UtilHelper.EMPTY;
+        return UtilHelper.void;
     }
 
 }

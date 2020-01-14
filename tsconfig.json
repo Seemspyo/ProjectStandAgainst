@@ -4,6 +4,7 @@
         "module": "esnext",
         "sourceMap": true,
         "strict": true,
+        "strictNullChecks": false,
         "importHelpers": true,
         "moduleResolution": "node",
         "esModuleInterop": true,
