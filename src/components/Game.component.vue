@@ -1,14 +1,15 @@
 <template>
-<div class="screen">
+<div class="game" ref="container">
     <canvas ref="view"></canvas>
-    <div class="screen-ui"></div>
+    <div class="game-ui"></div>
 </div>
 </template>
 
 <style lang="scss" scoped>
-.screen {
-    width: 100%;
+.game {
+    width: 100%; height: 100%;
     display: flex;
+    align-items: center;
     justify-content: center;
     background-color: #000;
 }
@@ -23,12 +24,15 @@ import Game from '../game';
 
 
 @Component
-export default class ScreenComponent extends Vue {
+export default class GameComponent extends Vue {
 
-    private game?: Game;
+    private game: Game;
 
     mounted() {
-        this.game = new Game(this.$refs.view as HTMLCanvasElement);
+        const { view, container } = this.$refs;
+
+        this.game = new Game(view as HTMLCanvasElement, container as HTMLElement);
+
         this.game.init();
     }
 

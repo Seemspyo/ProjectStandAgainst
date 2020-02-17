@@ -1,7 +1,7 @@
 <template>
 <main id="app">
-    <div class="screen-container">
-        <Screen></Screen>
+    <div class="game-container">
+        <Game></Game>
     </div>
 
     <div class="community-container">
@@ -16,6 +16,15 @@
 :root { width: 100%; height: 100%; }
 body { width: 100%; height: 100%; overflow: { x: hidden; y: auto; } }
 
+#app {
+    width: 100%; height: 100%;
+    display: block;
+}
+
+.game-container {
+    width: 100%; height: 100%;
+}
+
 </style>
 
 <script lang="ts">
@@ -23,13 +32,13 @@ import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 
 /** Components */
-import ScreenComponent from '@/components/Screen.component.vue';
+import GameComponent from '@/components/Game.component.vue';
 import CommunityComponent from '@/components/Community.component.vue';
 
 
 @Component({
     components: {
-        Screen: ScreenComponent,
+        Game: GameComponent,
         Community: CommunityComponent
     }
 })

@@ -7,10 +7,11 @@ CleanupPlugin = require('webpack-cleanup-plugin');
 
 const prodId = ( Date.now() - new Date('2019-12-16:14:56:00').getTime() ).toString(16);
 
-module.exports = {
+module.exports = env => ({
     entry: {
         main: './src/main.ts',
     },
+    mode: env || 'development',
     output: {
         filename: `[name].${ prodId }.js`,
         path: path.resolve(__dirname, 'dist')
@@ -52,9 +53,9 @@ module.exports = {
         port: 7200
     },
     plugins: [
-        new HTMLPlugin({ template: './src/index.html', filename: './app.html' }),
+        new HTMLPlugin({ template: env === 'production' ? './src/index.prod.html' : './src/index.html', filename: './app.html' }),
         new VueLoaderPlugin(),
         new CopyPlugin([ { from: 'src/assets', to: 'assets' } ], { copyUnmodified: true }),
         new CleanupPlugin()
     ]
-}
+});
