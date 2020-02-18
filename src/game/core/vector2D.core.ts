@@ -1,6 +1,9 @@
 /** Types */
 import { Raw2D } from '../@types';
 
+/** Custom Modules */
+import { radians } from '../core/functions.core';
+
 
 export class Vector2D {
 
@@ -34,6 +37,10 @@ export class Vector2D {
         return vector2;
     }
 
+    public static from(radian: number): Vector2D {
+        return new Vector2D(Math.cos(radian), Math.sin(radian));
+    }
+
     constructor(
         public x: number,
         public y: number
@@ -45,7 +52,11 @@ export class Vector2D {
         return Math.sqrt(x * x + y * y);
     }
 
-    public normalize(): Raw2D {
+    public get heading(): number {
+        return Math.atan2(this.y, this.x);
+    }
+
+    public normalize(): this {
         const { x, y, size } = this;
 
         if (size) {
@@ -53,48 +64,66 @@ export class Vector2D {
             this.y = y / size;
         }
 
-        return this.value;
+        return this;
     }
 
-    public add(vector2: Vector2D): Raw2D {
+    public add(vector2: Vector2D): this {
         this.x += vector2.x;
         this.y += vector2.y;
 
-        return this.value;
+        return this;
     }
 
-    public sub(vector2: Vector2D): Raw2D {
+    public sub(vector2: Vector2D): this {
         this.x -= vector2.x;
         this.y -= vector2.y;
 
-        return this.value;
+        return this;
     }
 
-    public multiply(scalar: number): Raw2D {
+    public multiply(scalar: number): this {
         this.x *= scalar;
         this.y *= scalar;
 
-        return this.value;
+        return this;
     }
 
-    public divide(scalar: number): Raw2D {
+    public divide(scalar: number): this {
         this.x /= scalar;
         this.y /= scalar;
 
-        return this.value;
+        return this;
     }
 
-    public reset(x: number, y: number): Raw2D {
-        this.x = x;
-        this.y = y;
+    public limit(max: number): this {
+        if (this.size > max) this.normalize().multiply(max);
 
-        return this.value;
+        return this;
     }
 
-    public get value(): Raw2D {
+    public between(v: Vector2D): number {
+        let
+        bx = this.x - v.x,
+        by = this.y - v.y;
+
+        return Math.sqrt(bx * bx + by * by);
+    }
+
+    public transform(radian: number): this {
+        this.x *= Math.cos(radian);
+        this.y *= Math.sin(radian);
+
+        return this;
+    }
+
+    public get raw(): Raw2D {
         const { x, y } = this;
 
         return { x, y }
+    }
+
+    public get raws(): [ number, number ] {
+        return [ this.x, this.y ]
     }
 
     public clone(): Vector2D {

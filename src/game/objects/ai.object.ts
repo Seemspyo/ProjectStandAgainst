@@ -2,39 +2,48 @@
 import { Container, Graphics } from 'pixi.js';
 
 /** Types */
-import { GameObject } from '../@types';
+import { GameObject, AIObjectOption } from '../@types';
+
+/** Custom Modules */
+import { assign } from '../core/functions.core';
 
 
 export class AI implements GameObject {
 
-    public container: Container;
+    public subject: Container;
     public body: Graphics;
     public eyes: [ Graphics, Graphics ];
 
     public alive: boolean = false;
 
-    constructor(x?: number, y?: number, scale?: number,  rotation?: number) {
-        this.create();
-
-        this.setPosition(x, y);
-        this.setScale(scale);
-        this.setRotation(rotation);
+    private get defaultOption(): AIObjectOption {
+        return { x: 0, y: 0, scale: 1, rotation: 0, bodyColor: 0x333333, eyeColorLeft: 0x777777, eyeColorRight: 0x777777 }
     }
 
-    create() {
+    constructor(option?: AIObjectOption) {
+        this.create(option);
+    }
+
+    create(option: AIObjectOption = {}) {
         if (this.alive) return;
 
-        this.container = new Container();
-        this.body = this.getCircle(0, 0, 100, 0x333333);
+        option = assign(option, this.defaultOption, false);
+
+        this.subject = new Container();
+        this.body = this.getCircle(0, 0, 100, option.bodyColor);
         this.eyes = [
-            this.getCircle(-40, -70, 12, 0x777777),
-            this.getCircle(40, -70, 12, 0x777777)
+            this.getCircle(-40, -70, 12, option.eyeColorLeft),
+            this.getCircle(40, -70, 12, option.eyeColorRight)
         ]
 
-        const clip = this.getCircle(0, 0, 100, 0x000000);
+        const clip = this.getCircle(0, 0, 100, 0x00000000);
 
-        this.container.mask = clip;
-        this.container.addChild(clip, this.body, ...this.eyes);
+        this.subject.mask = clip;
+        this.subject.addChild(clip, this.body, ...this.eyes);
+
+        this.subject.position.set(option.x, option.y);
+        this.subject.scale.set(option.scale, option.scale);
+        this.subject.rotation = option.rotation;
 
         this.alive = true;
     }
@@ -42,21 +51,13 @@ export class AI implements GameObject {
     kill() {
         if (!this.alive) return;
 
-        this.container.destroy();
+        this.subject.destroy();
+
+        this.eyes =
+        this.body =
+        this.subject = void 0;
 
         this.alive = false;
-    }
-
-    public setPosition(x: number = 0, y: number = 0): void {
-        this.container.position.set(x, y);
-    }
-
-    public setScale(n: number = 1): void {
-        this.container.scale.set(n, n);
-    }
-
-    public setRotation(radian: number = 0): void {
-        this.container.rotation = radian;
     }
 
     private getCircle(x: number, y: number, radius: number, color: number): Graphics {

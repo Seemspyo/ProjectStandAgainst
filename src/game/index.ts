@@ -4,6 +4,9 @@ import { Application } from 'pixi.js';
 /** Custom Modules */
 import { EventBinder } from './core/event-binder.core';
 import { ResizeWatcher } from './core/resize-watcher.core';
+import { Vector2D } from './core/vector2D.core';
+import { radians } from './core/functions.core';
+import { Move2D } from './behaviors/move2D.behavior';
 
 /** Types */
 import { Size } from './@types';
@@ -21,6 +24,9 @@ export default class Game {
 
     private initialized: boolean = false;
 
+    public player: AI;
+    public playerMove2D: Move2D;
+
     constructor(
         private view: HTMLCanvasElement,
         private container: HTMLElement
@@ -32,12 +38,16 @@ export default class Game {
         this.initialized = true;
 
         this.game = new Application({ view: this.view, backgroundColor: 0xcccccc, antialias: true });
-        this.view.setAttribute('tabindex', '0');
 
         this.resizeWatcher = new ResizeWatcher(this.container, 1920, 1080, this.eventBinder);
         this.resizeWatcher.watch();
 
         this.events.push( this.eventBinder.subscribe(this.resizeWatcher.size, size => this.rescale(size)) );
+
+        this.player = new AI();
+        this.playerMove2D = new Move2D(this.player.subject, new Vector2D(0, 0), 1);
+        this.game.stage.addChild(this.player.subject);
+        this.playerMove2D.run();
     }
 
     public destroy(): void {

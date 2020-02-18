@@ -14,13 +14,29 @@ export interface Raw2D {
 
 export interface GameObject {
 
-    container: Container;
+    subject: Container;
 
     create(): void;
     kill(): void;
 
-    setScale(n: number): void;
-    setPosition(x: number, y: number): void;
-    setRotation(radian: number): void;
+}
+
+export interface AIObjectOption {
+    x?: number;
+    y?: number;
+    scale?: number;
+    rotation?: number;
+    bodyColor?: number;
+    eyeColorLeft?: number;
+    eyeColorRight?: number;
+}
+
+export interface GameBehavior {
+
+    init(): void;
+    destroy(): void;
+
+    run(): void;
+    stop(): void;
 
 }
