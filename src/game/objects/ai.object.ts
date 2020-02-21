@@ -2,32 +2,33 @@
 import { Container, Graphics } from 'pixi.js';
 
 /** Types */
-import { GameObject, AIObjectOption } from '../@types';
+import { GameObject, AIObjectOption, Damagable } from '../@types';
 
 /** Custom Modules */
-import { assign } from '../core/functions.core';
+import { clone } from '../core/functions.core';
 
 
-export class AI implements GameObject {
+export class AI implements GameObject, Damagable {
 
     public subject: Container;
     public body: Graphics;
     public eyes: [ Graphics, Graphics ];
 
     public alive: boolean = false;
+    public HP = 100;
 
     private get defaultOption(): AIObjectOption {
         return { x: 0, y: 0, scale: 1, rotation: 0, bodyColor: 0x333333, eyeColorLeft: 0x777777, eyeColorRight: 0x777777 }
     }
 
-    constructor(option?: AIObjectOption) {
-        this.create(option);
+    constructor(auto: boolean = true, option?: AIObjectOption) {
+        if (auto) this.create(option);
     }
 
     create(option: AIObjectOption = {}) {
         if (this.alive) return;
 
-        option = assign(option, this.defaultOption, false);
+        option = clone(option, this.defaultOption, false);
 
         this.subject = new Container();
         this.body = this.getCircle(0, 0, 100, option.bodyColor);
@@ -58,6 +59,14 @@ export class AI implements GameObject {
         this.subject = void 0;
 
         this.alive = false;
+    }
+
+    attack(damage: number): number {
+        return this.HP -= damage;
+    }
+
+    heal(heal: number): number {
+        return this.HP += heal;
     }
 
     private getCircle(x: number, y: number, radius: number, color: number): Graphics {

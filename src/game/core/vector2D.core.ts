@@ -2,7 +2,7 @@
 import { Raw2D } from '../@types';
 
 /** Custom Modules */
-import { radians } from '../core/functions.core';
+import { radians } from './functions.core';
 
 
 export class Vector2D {
@@ -24,17 +24,15 @@ export class Vector2D {
     }
 
     public static multiply(vector2: Vector2D, scalar: number): Vector2D {
-        vector2 = vector2.clone();
-        vector2.multiply(scalar);
-
-        return vector2;
+        return vector2.clone().multiply(scalar);
     }
 
     public static divide(vector2: Vector2D, scalar: number): Vector2D {
-        vector2 = vector2.clone();
-        vector2.divide(scalar);
+        return vector2.clone().divide(scalar);
+    }
 
-        return vector2;
+    public static between(v1: Vector2D, v2: Vector2D): Vector2D {
+        return v1.clone().sub(v2);
     }
 
     public static from(radian: number): Vector2D {
@@ -53,7 +51,7 @@ export class Vector2D {
     }
 
     public get heading(): number {
-        return Math.atan2(this.y, this.x);
+        return Math.atan2(this.y, this.x) - radians(90);
     }
 
     public normalize(): this {
@@ -101,7 +99,7 @@ export class Vector2D {
         return this;
     }
 
-    public between(v: Vector2D): number {
+    public getDistance(v: Vector2D): number {
         let
         bx = this.x - v.x,
         by = this.y - v.y;
@@ -112,6 +110,13 @@ export class Vector2D {
     public transform(radian: number): this {
         this.x *= Math.cos(radian);
         this.y *= Math.sin(radian);
+
+        return this;
+    }
+
+    public set(x: number, y: number): this {
+        this.x = x;
+        this.y = y;
 
         return this;
     }

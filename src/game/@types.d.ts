@@ -31,6 +31,15 @@ export interface AIObjectOption {
     eyeColorRight?: number;
 }
 
+export interface Damagable {
+
+    HP: number;
+
+    attack(damage: number): number;
+    heal(heal: number): number;
+
+}
+
 export interface GameBehavior {
 
     init(): void;
@@ -40,3 +49,21 @@ export interface GameBehavior {
     stop(): void;
 
 }
+
+export interface GameSkill {
+
+    cooltime: number;
+    duration?: number;
+    available: boolean;
+
+    _durationWatcher: GameFrameFn;
+    _cooltimeWatcher: GameFrameFn;
+
+    shot(...args: any[]): any;
+    cancel(...args: any[]): void;
+
+    cooldown(): void;
+
+}
+
+export type GameFrameFn = (deltaMs: number) => void;

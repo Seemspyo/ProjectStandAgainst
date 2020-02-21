@@ -6,12 +6,14 @@ import { GameBehavior } from '../@types';
 
 /** Custom Modules */
 import { Vector2D } from '../core/vector2D.core';
+import { Indexer } from '../core/indexer.core';
 
 
 export class Move2D implements GameBehavior {
 
     private ticker: Ticker;
-    private forces: Map<number, Vector2D>;
+    public force: Indexer<Vector2D>;
+    public uniqueForce: Indexer<Vector2D>;
 
     public readonly velocity = new Vector2D(0, 0);
 
@@ -27,7 +29,8 @@ export class Move2D implements GameBehavior {
 
     init() {
         this.ticker = new Ticker();
-        this.forces = new Map();
+        this.force = new Indexer();
+        this.uniqueForce = new Indexer();
 
         this.ticker.add(() => this.update());
     }
@@ -37,7 +40,8 @@ export class Move2D implements GameBehavior {
         this.ticker.destroy();
 
         this.ticker =
-        this.forces = void 0;
+        this.force =
+        this.uniqueForce = void 0;
     }
 
     run() {
@@ -45,30 +49,18 @@ export class Move2D implements GameBehavior {
     }
 
     stop() {
-        if (!this.ticker.started) this.ticker.stop();
-    }
-
-    public addForce(force: Vector2D): number {
-        const id = performance.now();
-
-        this.forces.set(id, force);
-
-        return id;
-    }
-
-    public removeForce(id: number): boolean {
-        if (this.forces.has(id)) {
-            this.forces.delete(id);
-            return true;
-        }
-
-        return false;
+        if (this.ticker.started) this.ticker.stop();
     }
 
     private get acceleration(): Vector2D {
-        const forces = Array.from(this.forces.values()).map(force => Vector2D.divide(force, this.mass));
+        const forces: Array<Vector2D> = new Array();
+        for (const force of this.force.values) forces.push(force.divide(this.mass));
 
         return Vector2D.add(...forces);
+    }
+
+    private get uniqueAcceleration(): Vector2D {
+        return Vector2D.add(...this.uniqueForce.values);
     }
 
     private update(): void {
@@ -78,8 +70,7 @@ export class Move2D implements GameBehavior {
             this.velocity.sub(friction);
         }
 
-        this.velocity.add(this.acceleration);
-        this.velocity.limit(this.maxSpeed);
+        this.velocity.add(this.acceleration).limit(this.maxSpeed).add(this.uniqueAcceleration);
         this.position.add(this.velocity);
 
         this.subject.position.set(...this.position.raws);

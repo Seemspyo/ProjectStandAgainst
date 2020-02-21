@@ -6,8 +6,10 @@ export function blank(): void {
     return void(0);
 }
 
-export function assign(target: any, source: any, override?: boolean): any {
-    return assignInWith(target, source, (oldValue: any, newValue: any) => override || oldValue === void(0) ? newValue : oldValue);
+export function clone(target: any, source: any, override?: boolean): any {
+    const clone = Object.assign({}, target);
+
+    return assignInWith(clone, source, (oldValue: any, newValue: any) => override || oldValue === void(0) ? newValue : oldValue);
 }
 
 export function brace(n: number, min: number, max: number): number {
